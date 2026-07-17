@@ -1,4 +1,5 @@
 const dotenv = require('dotenv');
+const crypto = require('crypto');
 const express = require('express');
 const http = require('http');
 const favicon = require('serve-favicon');
@@ -21,15 +22,21 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
-
+const generateNonce = () => crypto.randomBytes(16).toString('hex');
 const config = {
   authRequired: false,
   auth0Logout: true,
+  routes: {
+    login: false,
+    logout: false
+  },
   authorizationParams: {
     response_type: 'code',
     scope: 'openid profile email',
+    correlation_id: generateNonce(),
     ui_locales: 'en'
   },
+  
   clientSecret: process.env.SECRET,
   baseURL: process.env.BASE_URL
 };

@@ -1,5 +1,17 @@
 <%- include('partials/header') -%>
 
-  <h1 class="text-4xl">💣 <%= error.status || "ERROR" %>: <%= message || "Error" %></h1>
+  <div class="max-w-md mx-auto mt-12 p-6 bg-gray-50 rounded-lg border border-gray-200 text-center">
+    <h1 class="text-xl font-medium text-gray-800 mb-2">
+      <%= error.status || "Error" %>: <%= message || "An unexpected error occurred" %>
+    </h1>
+    
+    <% if (message && message.includes('user account or session')) { %>
+      <div class="mt-4">
+        <a href="/login" class="text-sm font-medium text-blue-600 hover:text-blue-800 underline transition">
+          Log in again &rarr;
+        </a>
+      </div>
+    <% } %>
+  </div>
   
 <%- include('partials/footer') -%>

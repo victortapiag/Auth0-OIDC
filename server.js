@@ -32,7 +32,8 @@ const config = {
   },
   authorizationParams: {
     response_type: 'code',
-    scope: 'openid profile email',
+    scope: 'openid profile email offline_access',
+    audience: 'https://dev.kohls-lle.auth0app.com/api/v2/',
     correlation_id: generateNonce(),
     ui_locales: 'en'
   },
@@ -65,8 +66,19 @@ app.use(function (req, res, next) {
 
 // Error handlers
 app.use(function (err, req, res, next) {
+  // Check if the error is an invalid grant or related auth issue from Auth0
+  if (err.message && err.message.includes('invalid_grant')) {
+    return res.status(400).render('error', {
+      title: 'Account or Session Expired',
+      message: 'The user account or session could not be verified (it may have been removed or expired). Please try logging in again.',
+      error: process.env.NODE_ENV !== 'production' ? err : {}
+    });
+  }
+
+  // Default error handling for everything else
   res.status(err.status || 500);
   res.render('error', {
+    title: 'Error',
     message: err.message,
     error: process.env.NODE_ENV !== 'production' ? err : {}
   });
